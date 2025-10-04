@@ -34,6 +34,7 @@ Criar um **agente inteligente capaz de interagir com usuários em múltiplos for
 ```text
 Usuário envia mensagem → n8n recebe via Z-API → IA analisa conteúdo (OpenAI)
 → Caso solicite ligação → Twilio realiza chamada → IA responde em tempo real
+```
 
 Mensagens recebidas (texto, áudio, imagem) são interpretadas pela IA.
 
@@ -42,6 +43,7 @@ A decisão de fazer a ligação é automatizada de acordo com o contexto da conv
 O Twilio faz a chamada e conecta o usuário a um fluxo controlado pela IA.
 
 Todo o histórico pode ser registrado via Airtable, Notion ou outro banco, se configurado.
+
 
 🚀 Possíveis Aplicações
 
@@ -53,15 +55,6 @@ Suporte ao cliente com IA híbrida (texto + voz)
 
 Ligações automáticas para follow-ups, confirmação de agendamento ou pesquisas de satisfação
 
-🧠 Destaques Técnicos
-
-Suporte a mensagens multimodais (texto, áudio e imagem).
-
-Interpretação semântica via IA para entender intenção do usuário.
-
-Integração com telefonia via Twilio para chamadas dinâmicas.
-
-Pode ser estendido com logs, notificações ou armazenamento de histórico.
 
 ⚠️ Observações Importantes
 
