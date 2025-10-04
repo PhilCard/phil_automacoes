@@ -36,30 +36,27 @@ Usuário envia mensagem → n8n recebe via Z-API → IA analisa conteúdo (OpenA
 → Caso solicite ligação → Twilio realiza chamada → IA responde em tempo real
 ```
 
-Mensagens recebidas (texto, áudio, imagem) são interpretadas pela IA.
+### 🧠 Funcionamento da Automação
 
-A decisão de fazer a ligação é automatizada de acordo com o contexto da conversa.
+- Mensagens recebidas (**texto**, **áudio**, **imagem**) são interpretadas pela **IA**.  
+- A decisão de fazer a ligação é **automatizada** de acordo com o contexto da conversa.  
+- O **Twilio** faz a chamada e conecta o usuário a um fluxo controlado pela **IA**.  
+- Todo o histórico pode ser registrado via **Airtable**, **Notion** ou outro banco, se configurado.
 
-O Twilio faz a chamada e conecta o usuário a um fluxo controlado pela IA.
+---
 
-Todo o histórico pode ser registrado via Airtable, Notion ou outro banco, se configurado.
+### 🚀 Possíveis Aplicações
 
+- Atendimento automatizado em **clínicas**, **restaurantes**, **delivery** ou **e-commerce**  
+- **Agendamentos automáticos por voz**  
+- **Suporte ao cliente com IA híbrida** (texto + voz)  
+- Ligações automáticas para **follow-ups**, **confirmação de agendamento** ou **pesquisas de satisfação**
 
-🚀 Possíveis Aplicações
+---
 
-Atendimento automatizado em clínicas, restaurantes, delivery ou e-commerce
+### ⚠️ Observações Importantes
 
-Agendamentos automáticos por voz
+- As **credenciais de API** (OpenAI, Twilio, Z-API, V-API) **não são incluídas** no JSON exportado.  
+- Ao importar o fluxo no **n8n**, **crie suas próprias credenciais seguras**.  
+- É possível adicionar **camadas de autenticação** e **limites de uso** para ambiente de produção.
 
-Suporte ao cliente com IA híbrida (texto + voz)
-
-Ligações automáticas para follow-ups, confirmação de agendamento ou pesquisas de satisfação
-
-
-⚠️ Observações Importantes
-
-As credenciais de API (OpenAI, Twilio, Z-API, V-API) não são incluídas no JSON exportado.
-
-Ao importar o fluxo no n8n, crie suas próprias credenciais seguras.
-
-É possível adicionar camadas de autenticação e limites de uso para produção.
