@@ -33,11 +33,24 @@ Essas automações foram desenvolvidas com foco em:
 
 ## 🗂️ Estrutura do Repositório
 
+automacoes-felipe/
 │
-├─ README.md → Este arquivo
+├─ README.md                     ← resumo geral do repositório
 │
-├─ automacoes-n8n/ → Automações criadas no n8n (fluxos em JSON e demonstrações)
-└─ diagramas/ → Diagramas e visualizações dos fluxos
+├─ automacoes-n8n/
+│   ├─ fluxo1/
+│   │   ├─ fluxo1.json
+│   │   ├─ screenshot.png
+│   │   └─ README.md             ← explicando só essa automação
+│   ├─ fluxo2/
+│   │   ├─ fluxo2.json
+│   │   ├─ GIFs/
+│   │   │   └─ demonstracao.gif
+│   │   └─ README.md
+│   └─ ...
+└─ diagramas/
+    ├─ fluxo1.png
+    └─ fluxo2.png
 
 
 Cada automação possui um **README próprio**, contendo:
