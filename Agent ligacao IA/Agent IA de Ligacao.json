@@ -1,0 +1,629 @@
+{
+  "name": "Agent IA de Ligacao",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "SEU-PATH-AQUI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        16
+      ],
+      "id": "ed33abcb-9c08-48a2-8f86-8a01f5bab6f3",
+      "name": "Webhook",
+      "webhookId": "8183db72-046d-408a-aff5-c6d70691cfed"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.text.message }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "30be5f24-015e-4315-9bb4-e8d7076afe40"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b79e4b98-0273-4efd-b91e-01ec17b1c4ac",
+                    "leftValue": "={{ $json.body.audio.audioUrl }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8065aff8-0fb5-4646-ae16-54014cd1d4ac",
+                    "leftValue": "={{ $json.body.image.imageUrl }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "25b90818-cc98-441b-9909-744ac2daa85b",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.text.message }}\n{{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant\n\n### Diretrizes de Uso das Tools\n\n- Se o usuário pedir pra você ligar pra ele, o whatsapp dele é: {, se não tiver nada aqui, peça a ele o número dele com DDD e depois use a tool \"FazerLigacao\", o número deve estar no formato +5531975896500 ou seja +ddidddtelefone\n\n- Se o usuário perguntar se nós ensinamos a fazer robô de telemarketing que faz ligação, fale que não só ensinamos mas que também podemos mostrar isso agora pra ele, e ai pergunta se quer que nós liguemos pra ele. O número do robo que vai ligar é + 1 (443) 242-9543 - pro lead ficar atento na ligação.\n\n- PS.: Se o número do usuário for de outro páis, você consegue ligar também, só usar a mesma lógica com o DDI dele...\n\n- Se o usuário falar que não recebeu a ligação, pode ser que ele tem alguma configuração pra bloquear chamadas desconhecidas, estrangeiras ou está sem sinal, peça ele pra verificar isso...\n",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        -96
+      ],
+      "id": "1b8510d9-d3e5-4cfd-814b-75992ffd27b2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.audio.audioUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        16
+      ],
+      "id": "56b99176-73d1-426f-88d7-83413995ad3a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        576,
+        16
+      ],
+      "id": "03bc5295-a16a-4d49-bb0d-e57c48b048ff",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "37TxKSqXZKAnBfro",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.image.imageUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        192
+      ],
+      "id": "143de9dc-3c63-4ecb-803e-06beb6e53614",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        112
+      ],
+      "id": "0da5f2c9-1d2b-40f4-a085-03b76b336562",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "37TxKSqXZKAnBfro",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "12345"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        944,
+        144
+      ],
+      "id": "f742e369-6a94-41d3-b8be-354b48208e38",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## Webhooks\npara realizar testes com ngrok, se atentar ao path, pode ser mudado para uma url mais amigavel. Sempre que um webhook novo é criado, cria-se um novo path também",
+        "height": 224,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "2f8aa77d-4b98-4675-bf45-87d393eeb1be",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Webhooks\nrenomear o webhooks pode dar problemas em nós mais para frente\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "bd8908a9-ca79-4e82-9257-8df86440ab1d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst outputLength = items[0]?.json?.output.length;\n\nreturn { outputLength };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "2cc7e410-7e47-4d64-825e-21afabd0ec94",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ec6a2187-875a-41b9-b37f-7bbacf24f7c1",
+              "leftValue": "={{ $json.outputLength }}",
+              "rightValue": 800,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        0
+      ],
+      "id": "07d7736f-24cd-4cee-b402-9226ac27047d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "model": "tts-1-hd",
+        "input": "={{ $('AI Agent').item.json.output }}",
+        "voice": "echo",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1648,
+        -96
+      ],
+      "id": "efc57ffa-90a4-4416-8680-0ff656153872",
+      "name": "Generate audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "37TxKSqXZKAnBfro",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3E7F7468948B41D37D4AE25EF57C2ED0/token/636E63C01F2670830A446CDE/send-audio",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Client-Token",
+              "value": "CLIENT-TOKEN-ID-AQUI"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"audio\": \"data:audio/mpeg;base64,{{ $json.data }}\",\n  \"viewOnce\": false,\n  \"waveform\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        -96
+      ],
+      "id": "bdf9ca22-13bc-43a3-aa69-ebb006f8d036",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        -96
+      ],
+      "id": "73e18652-d76a-42d5-a06f-840406c7f4ad",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "## Http Request 2 - Z-Api\nNo campo de requisição body, sempre verificar json (doc do fornecedor) e ver se foi feito a corversão para áudio"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2064,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "6a320aec-8c8f-46b5-b294-d2a7e021f075",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3E7F7468948B41D37D4AE25EF57C2ED0/token/636E63C01F2670830A446CDE/send-text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Client-Token",
+              "value": "CLIENT-TOKEN-ID-AQUI"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $('Webhook').item.json.body.phone }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $('AI Agent').item.json.output }}"
+            },
+            {
+              "name": "delayTyping",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1648,
+        112
+      ],
+      "id": "0a27b3c6-ee44-4068-94bd-0e0faf12239d",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to make call to the customer number",
+        "method": "POST",
+        "url": "https://api.vapi.ai/call",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer SUA-CHAVE-AQUI"
+            },
+            {
+              "name": "content-type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistantId\": \"seu-assistent-id-aqui\",\n  \"customer\": {\n    \"number\": \"{phone}\"\n  },\n  \"phoneNumberId\": \"seu-phone-number-id\"\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "phone",
+              "description": "o número de telefone do lead no formato correto"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        128
+      ],
+      "id": "39a4ba10-ad91-44ca-880d-811ea4e1f979",
+      "name": "FazerLigacao1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Generate audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate audio": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FazerLigacao1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "14feea8f-8aad-4823-9712-8267a8daf252",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47f8f77fc2c1244a6721bcd0a6a936cf2a4a0728ea05bfe6d9de8c2bec4c775a"
+  },
+  "id": "Ssrn4pq5wGPtNpwi",
+  "tags": []
+}
